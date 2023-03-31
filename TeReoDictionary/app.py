@@ -17,7 +17,7 @@ def create_connection(db_file):
     return None
 @app.route('/')
 def hello_world():  # put application's code here
-    return render_template('mainpage.html')
+    return render_template('base.html')
 
 
 if __name__ == '__main__':
