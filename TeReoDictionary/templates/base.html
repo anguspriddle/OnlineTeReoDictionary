@@ -7,17 +7,33 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
-<nav>
-    <div class = "container">
-        <div class = "navbar-brand"></div>
-        <div class = "navbar-links">
-
-        </div>
-    </div>
-</nav>
-<div class = "container">
-
+<div class ="headingbanner">
+    <h1>Te Reo Dictionary</h1>
 </div>
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/full">Dictionary</a></li>
+    <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn">Categories</a>
+        <div class="dropdown-content">
+            <a href = "/full/1">Actions</a>
+            <a href = "/full/2">Animals</a>
+            <a href = "/full/3">Clothing</a>
+            <a href = "/full/4">Culture / Religion</a>
+            <a href = "/full/5">Descriptions</a>
+            <a href = "/full/6">Emotions</a>
+            <a href = "/full/7">Food</a>
+            <a href = "/full/8">Math / Number</a>
+            <a href = "/full/9">Outdoors</a>
+            <a href = "/full/10">People / Places</a>
+            <a href = "/full/11">Plants</a>
+            <a href = "/full/12">School / Sport</a>
+            <a href = "/full/13">Technology</a>
+            <a href = "/full/14">Time</a>
+        </div>
+    </li>
+    <li><input type="text" placeholder="Search.."></li>
+
+</ul>
 </body>
-<div class = "header"><header>Hello</header></div>
 </html>
