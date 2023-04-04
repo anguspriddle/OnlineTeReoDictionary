@@ -12,19 +12,18 @@ p {
 
 .headingbanner{
     font-weight: bold;
-    font-family: 'Helvetica', 'Arial', sans-serif;
-    font-size: 60px;
+    font-family: 'Helvetica', 'Arial', sans-serif;;
     padding: 20px;
-    background-color:#404040;
+    background-color:#430d27;
 }
 body {
-    background-color: #FEF5E7;
+    background-color: #713045;
 }
 
 h1 {
     font-size: 60px;
     text-align:center;
-    color:mintcream;
+    color:#fffdfb;
 }
 
 ul {
@@ -32,7 +31,7 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
+  background-color: #582233;
 }
 
 li {
@@ -89,5 +88,31 @@ li input[type=text] {
   margin-left: 16px;
   font-size: 17px;
   width: 300px;
+}
+
+.mainpagesearch {
+
+}
+/* Style the search box inside the navigation bar */
+.mainpagesearch input[type=text] {
+  padding: 20px;
+  border: none;
+  margin-top: 15%;
+  margin-right: 50%;
+  margin-left: 36%;
+  font-size: 25px;
+  width: 500px;
+}
+
+.mainpagesearch.button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
 }
 

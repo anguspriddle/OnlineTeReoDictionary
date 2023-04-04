@@ -18,8 +18,11 @@ def create_connection(db_file):
     return None
 @app.route('/')
 def hello_world():  # put application's code here
-    return render_template('base.html')
+    return render_template('home.html')
 
+@app.route('/full')
+def render_fulldictionary():
+    return render_template('full.html')
 
 if __name__ == '__main__':
     app.run()
