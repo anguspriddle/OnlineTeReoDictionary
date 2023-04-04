@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% block navbar %}
-    <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/full">Dictionary</a></li>
-    <li class="dropdown">
-        <a href="javascript:void(0)" class="dropbtn">Categories</a>
+<div class="topnav">
+    <a href="/">Home</a>
+    <a href="/full">Dictionary</a>
+    <div class="dropdown">
+        <button class="dropbtn">Categories
+            <i class="fa fa-caret-down"></i>
+        </button>
         <div class="dropdown-content">
             <a href = "/full/1">Actions</a>
             <a href = "/full/2">Animals</a>
@@ -21,11 +23,15 @@
             <a href = "/full/13">Technology</a>
             <a href = "/full/14">Time</a>
         </div>
-    </li>
-    <li><a href="/login">Login</a></li>
-    <li><a href="/signup">Sign Up</a></li>
-    <li><input type="text" placeholder="Rapunga.."></li>
-
-
-</ul>
+    </div>
+  <div class="search-container">
+    <form action="/action_page.php">
+      <input type="text" placeholder="Search.." name="search">
+      <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block main %}
+<h1>under construction</h1>
 {% endblock %}

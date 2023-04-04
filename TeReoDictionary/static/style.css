@@ -26,35 +26,151 @@ h1 {
     color:#fffdfb;
 }
 
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #582233;
+.container {
+    width: 90%;
+    min-height: 63vh;
+    padding: 5%;
+    background-color: #713045;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-li {
-  float: left;
+.search-bar {
+    width: 100%;
+    max-width: 700px;
+    background: #582233;
+    display: flex;
+    align-items: center;
+    border-radius:60px;
+    padding: 10px 20px;
 }
 
-li a, .dropbtn {
-  display: inline-block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
+.search-bar input{
+    background: transparent;
+    flex: 1;
+    border: 0;
+    outline: none;
+    padding: 24px 20px;
+    font-size: 20px;
+    color: #cac7ff
 }
 
-li a:hover, .dropdown:hover .dropbtn {
-  background-color: white;
-  color: black;
+.search-bar button img {
+    width: 25px;
 }
 
+.search-bar button{
+    border:0;
+    border-radius: 50%;
+    width:60px;
+    height:60px;
+    background-color:#713045;
+}
+
+.search-bar-list {
+    width: 105%;
+    max-width: 700px;
+    background: #713045;
+    display: flex;
+    align-items: center;
+    border-radius:60px;
+    padding: 1px 2px;
+}
+
+.search-bar-list input{
+    background: transparent;
+    border: 0;
+    padding: 5px 2px;
+    padding-top:20px;
+    font-size: 20px;
+    color: #cac7ff
+}
+
+.search-bar-list button img {
+    width: 20px;
+}
+
+.search-bar-list button{
+    border:0;
+    border-radius: 50%;
+    width:10px;
+    height:10px;
+    background-color:#713045;
+}
+
+.topnav {
+    overflow: hidden;
+    background: #582233;
+}
+
+.topnav a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-weight: lighter;
+    padding: 14px 16px;
+    font-size: 17px;
+}
+
+.topnav a:hover{
+    background-color:white;
+    color:black;
+}
+
+.topnav .search-container {
+  float: right;
+}
+
+.topnav input[type=text] {
+  padding: 6px;
+  margin-top: 8px;
+  font-size: 17px;
+  border: none;
+}
+
+.topnav .search-container button {
+  float: right;
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background: #ddd;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.topnav .search-container button:hover {
+  background: #ccc;
+}
+
+
+/* The dropdown container */
 .dropdown {
-  display: inline-block;
+  float: left;
+  overflow: hidden;
 }
 
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */
+}
+
+/* Add a red background color to navbar links on hover */
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: red;
+}
+
+/* Dropdown content (hidden by default) */
 .dropdown-content {
   display: none;
   position: absolute;
@@ -64,7 +180,9 @@ li a:hover, .dropdown:hover .dropbtn {
   z-index: 1;
 }
 
+/* Links inside the dropdown */
 .dropdown-content a {
+  float: none;
   color: black;
   padding: 12px 16px;
   text-decoration: none;
@@ -72,47 +190,12 @@ li a:hover, .dropdown:hover .dropbtn {
   text-align: left;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1;}
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
 
+/* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
   display: block;
 }
-
-/* Style the search box inside the navigation bar */
-li input[type=text] {
-  float: right;
-  padding: 5px;
-  border: none;
-  margin-top: 8px;
-  margin-right: 16px;
-  margin-left: 16px;
-  font-size: 17px;
-  width: 300px;
-}
-
-.mainpagesearch {
-
-}
-/* Style the search box inside the navigation bar */
-.mainpagesearch input[type=text] {
-  padding: 20px;
-  border: none;
-  margin-top: 15%;
-  margin-right: 50%;
-  margin-left: 36%;
-  font-size: 25px;
-  width: 500px;
-}
-
-.mainpagesearch.button {
-  float: left;
-  width: 20%;
-  padding: 10px;
-  background: #2196F3;
-  color: white;
-  font-size: 17px;
-  border: 1px solid grey;
-  border-left: none;
-  cursor: pointer;
-}
-
