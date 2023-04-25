@@ -28,8 +28,8 @@
 </div>
 {% endblock %}
 {% block main %}
-    <form action="" class="search-bar">
-        <input type="text" placeholder="Rapunga..." name="q">
+    <form method="POST" action="/search" class="search-bar">
+        <input type="text" placeholder="Rapunga..." name="search" id="search">
         <button type="submit"><img src="/static/images/search.png"></button>
     </form>
 {% endblock %}
