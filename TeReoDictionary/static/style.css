@@ -44,10 +44,11 @@ h1 {
 .search-bar {
     width: 100%;
     max-width: 700px;
-    background: #52BE80;
+    background-color: rgba(0,0,0,.5);
     display: flex;
     align-items: center;
     border-radius:60px;
+    color: white;
     padding: 10px 20px;
 }
 
@@ -58,7 +59,7 @@ h1 {
     outline: none;
     padding: 24px 20px;
     font-size: 20px;
-    color: #cac7ff
+    color: white;
 }
 
 .search-bar button img {
@@ -70,7 +71,7 @@ h1 {
     border-radius: 50%;
     width:60px;
     height:60px;
-    background-color:#7DCEA0;
+    background-color: rgba(0,0,0,.5);;
 }
 
 .search-bar-list {
@@ -218,6 +219,7 @@ h1 {
     border: 2px solid rgba(189, 195, 199, 1.0);
     color: white;
     margin-bottom: 0.5rem;
+    background-color: rgba(0,0,0,.5);
 }
 
 .word-box-word {
@@ -226,4 +228,45 @@ h1 {
 
 .word-box-definition {
     padding: 0.5rem;
+}
+
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color:#283747 ;
+  position: fixed;
+  height: 100%;
+  overflow: hidden;
+  float: left;
+  left: 0px;
+  top: 0px;
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
 }
