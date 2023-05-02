@@ -13,24 +13,29 @@ p {
 .headingbanner{
     font-weight: bold;
     font-family: 'Helvetica', 'Arial', sans-serif;;
-    padding: 20px;
-    background-color:#430d27;
+    background-color: transparent;
 }
 body {
-    background-color: #713045;
+    background-image: url("/static/images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 h1 {
     font-size: 60px;
-    text-align:center;
-    color:#fffdfb;
+    padding: 10px;
+    background-color: #52BE80;
+    align-items: center;
+    text-align: center;
+    color: white;
 }
 
 .container {
     width: 90%;
     min-height: 63vh;
     padding: 5%;
-    background-color: #713045;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,7 +44,7 @@ h1 {
 .search-bar {
     width: 100%;
     max-width: 700px;
-    background: #582233;
+    background: #52BE80;
     display: flex;
     align-items: center;
     border-radius:60px;
@@ -65,7 +70,7 @@ h1 {
     border-radius: 50%;
     width:60px;
     height:60px;
-    background-color:#713045;
+    background-color:#7DCEA0;
 }
 
 .search-bar-list {
@@ -101,7 +106,7 @@ h1 {
 
 .topnav {
     overflow: hidden;
-    background: #582233;
+    background: #229954;
 }
 
 .topnav a {
