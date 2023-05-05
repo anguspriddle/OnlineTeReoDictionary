@@ -1,59 +1,5 @@
 {% extends 'base.html' %}
 {% block navbar %}
-    <div class="sidebar" id="mySidebar">
-        <a href="/">Home</a>
-        <a href="/full">Dictionary</a>
-        <div class="dropdown">
-            <button class="dropbtn">Categories
-                <i class="fa fa-caret-down"></i>
-            </button>
-                <div class="dropdown-content">
-                    <a href = "/full/Actions">Actions</a>
-                    <a href = "/full/Animals">Animals</a>
-                    <a href = "/full/Clothing">Clothing</a>
-                    <a href = "/full/Culture">Culture / Religion</a>
-                    <a href = "/full/Descriptions">Descriptions</a>
-                    <a href = "/full/Emotions">Emotions</a>
-                    <a href = "/full/Food">Food</a>
-                    <a href = "/full/Math">Math / Number</a>
-                    <a href = "/full/Outdoors">Outdoors</a>
-                    <a href = "/full/People">People / Places</a>
-                    <a href = "/full/Plants">Plants</a>
-                    <a href = "/full/School">School / Sport</a>
-                    <a href = "/full/Technology">Technology</a>
-                    <a href = "/full/Time">Time</a>
-                </div>
-        </div>
-    </div>
-    <button onclick="openNav()"><img src="/static/images/logo.png" style="width: 80px; height: 80px;"></button>
-{#<div class="topnav">
-    <img src="/static/images/logo.png" style="float: left; width:50px; height: 50x;">
-    <a href="/">Home</a>
-    <a href="/full">Dictionary</a>
-    <div class="dropdown">
-        <button class="dropbtn">Categories
-            <i class="fa fa-caret-down"></i>
-        </button>
-            <div class="dropdown-content">
-                <a href = "/full/Actions">Actions</a>
-                <a href = "/full/Animals">Animals</a>
-                <a href = "/full/Clothing">Clothing</a>
-                <a href = "/full/Culture">Culture / Religion</a>
-                <a href = "/full/Descriptions">Descriptions</a>
-                <a href = "/full/Emotions">Emotions</a>
-                <a href = "/full/Food">Food</a>
-                <a href = "/full/Math">Math / Number</a>
-                <a href = "/full/Outdoors">Outdoors</a>
-                <a href = "/full/People">People / Places</a>
-                <a href = "/full/Plants">Plants</a>
-                <a href = "/full/School">School / Sport</a>
-                <a href = "/full/Technology">Technology</a>
-                <a href = "/full/Time">Time</a>
-            </div>
-    </div>
-
-</div>#}
-
 {% endblock %}
 {% block main %}
     <form method="POST" action="/search" class="search-bar">

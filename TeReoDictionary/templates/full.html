@@ -1,23 +1,9 @@
 {% extends 'base.html' %}
-{% block navbar %}
-    <div class="topnav">
-        <a href="/full/1">Home</a>
-        <a href="/full">Dictionary</a>
-        <div class="dropdown">
-            <button class="dropbtn">Categories
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-
-            </div>
-        </div>
-        <div class="search-container">
-            <form method="POST" action="/search">
-                <input type="text" placeholder="Search.." name="search" id="search">
-                <button type="submit"></button>
-            </form>
-        </div>
-    </div>
+{% block search %}
+        <form method="POST" action="/search" class="search-bar-nonhome">
+            <input type="text" placeholder="Rapunga..." name="search" id="search">
+        <button type="submit"><img src="/static/images/search.png"></button>
+    </form>
 {% endblock %}
 {% block main %}
     <div class="dictionary">

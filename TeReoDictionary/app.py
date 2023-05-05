@@ -31,20 +31,16 @@ def render_fulldictionary():
     print(dictionary)
     return render_template('full.html', fulldictionary=dictionary)
 
-@app.route('/full/<Category>')
-def render_fulldictionary_categories(Category):
+@app.route('/full/<cat_id>')
+def render_fulldictionary_categories(cat_id):
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary WHERE Category=?"
+    query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary WHERE cat_id=?"
     cur = con.cursor()
-    cur.execute(query, (Category,))
-    query = "SELECT id, Category FROM Categories"
-    cur = con.cursor()
-    cur.execute(query)
-    category_list = cur.fetchall()
+    cur.execute(query, (cat_id,))
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('full.html', dictionary=dictionary, category_list=category_list)
+    return render_template('full.html', dictionary=dictionary)
 
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
