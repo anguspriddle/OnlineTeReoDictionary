@@ -20,8 +20,8 @@ def create_connection(db_file):
 def hello_world():  # put application's code here
     return render_template('home.html')
 
-@app.route('/full')
-def render_fulldictionary():
+@app.route('/words')
+def render_dictionary():
     con = create_connection(DATABASE)
     query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary"
     cur = con.cursor()
@@ -29,18 +29,18 @@ def render_fulldictionary():
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('full.html', fulldictionary=dictionary)
+    return render_template('words.html', dictionary=dictionary)
 
-@app.route('/full/<cat_id>')
-def render_fulldictionary_categories(cat_id):
+@app.route('/words/<Category>')
+def render_dictionary_categories(Category):
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary WHERE cat_id=?"
+    query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary WHERE Category=?"
     cur = con.cursor()
-    cur.execute(query, (cat_id,))
+    cur.execute(query, (Category,))
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('full.html', dictionary=dictionary)
+    return render_template('words.html', dictionary=dictionary)
 
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
