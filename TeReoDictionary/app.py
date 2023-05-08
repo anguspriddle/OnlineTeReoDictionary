@@ -23,7 +23,7 @@ def hello_world():  # put application's code here
 @app.route('/words')
 def render_dictionary():
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary"
+    query = "SELECT Maori, English, Category, Definition, YearLevel FROM Dictionary"
     cur = con.cursor()
     cur.execute(query)
     dictionary = cur.fetchall()
@@ -34,7 +34,7 @@ def render_dictionary():
 @app.route('/words/<Category>')
 def render_dictionary_categories(Category):
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM FullDictionary WHERE Category=?"
+    query = "SELECT Maori, English, Category, Definition, YearLevel FROM Dictionary WHERE Category=?"
     cur = con.cursor()
     cur.execute(query, (Category,))
     dictionary = cur.fetchall()
@@ -47,7 +47,7 @@ def render_search():
     search = request.form['search']
     title = "Search for " + search
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition YearLevel FROM FullDictionary WHERE " \
+    query = "SELECT Maori, English, Category, Definition YearLevel FROM Dictionary WHERE " \
             "Maori like ? OR English like ? OR Category like ? OR Definition like ? OR YearLevel like ?"
     search = "%" + search + "%"
     cur = con.cursor()
