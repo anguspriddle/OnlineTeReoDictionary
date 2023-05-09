@@ -36,6 +36,15 @@
                 <a href = "/words/Time">Time</a>
             </div>
     </div>
+    {% if is_teacher %}
+        <a href="/admin">Admin</a>
+    {% endif %}
+    <div class="sidebarfooter">
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+    </div>
+
+
 </div>
 <div class="headingbanner">
     {% block search %}
