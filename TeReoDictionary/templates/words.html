@@ -10,12 +10,13 @@
         {% for words in dictionary %}
             <div class="word-box">
                 <div class="word-box-word">
-                    <h2>{{ words[0] }}</h2>
+                    <a href="{{ words[0] }}"><h2>{{ words[0] }}</h2></a>
                     <h3>{{ words[1] }}</h3>
                     <h4 style="float:right">{{ words[2] }}</h4>
                 </div>
                 <div class="word-box-definition">
                     <p>{{ words[3] }}</p>
+                    <p>Author: {{ words[5] }}</p>
                 </div>
             </div>
         {% endfor %}

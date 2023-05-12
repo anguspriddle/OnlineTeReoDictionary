@@ -194,7 +194,15 @@ h1 {
     padding: 0.5rem;
 }
 
-
+.singularwordbox {
+    width: 100%;
+    width: 500px;
+    height: 400px;
+    border: 2px solid rgba(189, 195, 199, 1.0);
+    color: white;
+    margin-bottom: 0.5rem;
+    background-color: rgba(0,0,0,.5);
+}
 /* The sidebar menu */
 .sidebar {
   height: 100%; /* 100% Full-height */

@@ -36,12 +36,16 @@
                 <a href = "/words/Time">Time</a>
             </div>
     </div>
-    {% if is_teacher %}
-        <a href="/admin">Admin</a>
-    {% endif %}
     <div class="sidebarfooter">
-        <a href="/login">Login</a>
-        <a href="/signup">Sign Up</a>
+        {% if is_teacher %}
+            <a href="/admin">Admin</a>
+        {% endif %}
+        {% if is_logged_in %}
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/signup">Sign Up</a>
+        {% endif %}
     </div>
 
 

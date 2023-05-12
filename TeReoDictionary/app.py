@@ -34,18 +34,18 @@ def is_teacher():
         return False
 @app.route('/')
 def hello_world():  # put application's code here
-    return render_template('home.html')
+    return render_template('home.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
 
 @app.route('/words')
 def render_dictionary():
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM Dictionary"
+    query = "SELECT Maori, English, Category, Definition, YearLevel, Author FROM Dictionary"
     cur = con.cursor()
     cur.execute(query)
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('words.html', dictionary=dictionary)
+    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher())
 
 @app.route('/words/<Category>')
 def render_dictionary_categories(Category):
@@ -56,7 +56,19 @@ def render_dictionary_categories(Category):
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('words.html', dictionary=dictionary)
+    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+
+@app.route('/<Maori>')
+def render_word(Maori):
+    con = create_connection(DATABASE)
+    query = "SELECT Maori, English, Category, Definition, YearLevel FROM Dictionary WHERE Maori=?"
+    cur = con.cursor()
+    cur.execute(query, (Maori,))
+    word = cur.fetchall()
+    con.close()
+    print(word)
+    return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+
 
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
@@ -70,18 +82,18 @@ def render_search():
     cur.execute(query, (search, search, search, search, search))
     dictionary = cur.fetchall()
     con.close()
-    return render_template("search.html", searchdictionary = dictionary, title=title)
+    return render_template("search.html", searchdictionary = dictionary, title=title, is_logged_in=is_logged_in(), is_teacher=is_teacher())
 
 @app.route('/login', methods=['POST', 'GET'])
 def render_login():
     if is_logged_in():
-        return redirect('/menu/1')
+        return redirect('/')
     print("logging in")
     if request.method == "POST":
         email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
-        query = "SELECT id, fname, password FROM users WHERE email = ?"
+        query = "SELECT id, fname, password, permissions FROM users WHERE email = ?"
         con = create_connection(DATABASE)
         cur = con.cursor()
         cur.execute(query, (email,))
@@ -93,9 +105,9 @@ def render_login():
             user_id = user_data[0]
             first_name = user_data[1]
             db_password = user_data[2]
-            permissions = user_data[4]
+            permissions = user_data[3]
         except IndexError:
-            return redirect("/login?error=Invalid+email+or+password")
+            return redirect("/login?error=INDEXERROR")
 
         if not bcrypt.check_password_hash(db_password, password):
             return redirect(request.referrer + "?error=Email+invalid+or+Password+incorrect")
@@ -106,7 +118,7 @@ def render_login():
         session['permissions'] = permissions
         print(session)
         return redirect('/')
-    return render_template('login.html')
+    return render_template('login.html', is_teacher=is_teacher(), is_logged_in=is_logged_in())
 
 @app.route('/signup', methods=['POST', 'GET'])
 def render_signup():
@@ -150,11 +162,18 @@ def render_signup():
 
         return redirect("/login")
 
-    return render_template('signup.html')
+    return render_template('signup.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
 
 @app.route('/admin')
 def render_admin():  # put application's code here
-    return render_template('admin.html')
+    return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
+
+@app.route('/logout')
+def render_logout():
+    print(list(session.keys()))
+    [session.pop(key) for key in list(session.keys())]
+    print(list(session.keys()))
+    return redirect('/?message=see+you+next+time!')
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block navbar %}
+{% endblock %}
+{% block main %}
+    <div class="dictionary">
+        {% for word in word %}
+            <div class="singularwordbox">
+                <div class="word-box-word">
+                    <h2>{{ word[0] }}</h2>
+                    <h3>{{ word[1] }}</h3>
+                    <h4>Category: {{ word[2] }}</h4>
+                </div>
+                <div class="word-box-definition">
+                    <p>{{ word[3] }}</p>
+                    <p>Author: {{ word[6] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
