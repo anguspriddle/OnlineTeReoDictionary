@@ -6,8 +6,8 @@
         {% for word in word %}
             <div class="singularwordbox">
                 {% if is_teacher %}
-                    <form action="/deleteword/{{ word[0] }}">
-                        <input type="submit" value="Delete">
+                    <form action="/deletewordconfirmation/{{ word[0] }}" >
+                        <input type="submit" value="Delete" class="wordbutton">
                     </form>
                 {% endif %}
                 <div class="word-box-word">
@@ -18,13 +18,13 @@
                 <div class="word-box-definition">
                     <p>{{ word[4] }}</p>
                     <p>Author: {{ word[6] }}</p>
-                    {% if word[7] is none %}
-                        <img src="/static/images/placeholder.png" style="width:200px; height: 200px;" >
-                    {% else %}
-                        <img src="/static/images/{{ word[7] }}">
-                    {% endif %}
-                </div>
 
+                </div>
+                {% if word[7] is none %}
+                    <img src="/static/images/placeholder.png" class="center">
+                {% else %}
+                    <img src="/static/images/{{ word[7] }}" class="center">
+                {% endif %}
 
             </div>
         {% endfor %}

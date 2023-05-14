@@ -36,10 +36,20 @@ def is_teacher():  # this function will check if the person logged in to the ses
         print("is not teacher")
         return False
 
+def categories():
+    con = create_connection(DATABASE)
+    query = "SELECT Category FROM Categories"
+    cur = con.cursor()
+    cur.execute(query)
+    Categories = cur.fetchall()
+    print("Categories:", Categories) # Add this line for debugging
+    con.close()
+    return Categories
 
 @app.route('/')
 def render_home():
-    return render_template('home.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    Categories = categories()
+    return render_template('home.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
 
 @app.route('/words')
@@ -53,21 +63,23 @@ def render_dictionary():
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    Categories = categories()
+    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will return the html page while passing through all the variables
 
 
 @app.route('/words/<Category>')  # This is a link that passes through what category it's looking for through the link
 def render_dictionary_categories(Category):
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel, Author FROM Dictionary WHERE Category=?"
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author FROM Dictionary WHERE Category=?"
     # This query means that it will only take the category that was selected through the link
     cur = con.cursor()
     cur.execute(query, (Category,))
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
-    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    Categories = categories()
+    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will pass through the page but now with the variable only having the selected category
 
 @app.route('/<id>')
@@ -79,8 +91,19 @@ def render_word(id):
     word = cur.fetchall()
     con.close()
     print(word)
-    return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    Categories = categories()
+    return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
+@app.route('/deletewordconfirmation/<id>')
+def deletewordconfirmation(id):
+    con = create_connection(DATABASE)
+    query = "SELECT id, Maori FROM Dictionary WHERE id=?"
+    cur = con.cursor()
+    cur.execute(query, (id,))
+    word = cur.fetchall()
+    print(word)
+    con.close()
+    return render_template('deletewordconfirmation.html', word=word)
 @app.route('/deleteword/<id>')
 def deleteword(id):
     con = create_connection(DATABASE)
@@ -89,6 +112,7 @@ def deleteword(id):
     cur.execute(query, (id,))
     con.commit()
     con.close()
+    Categories = categories()
     return redirect('/')
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
@@ -102,8 +126,9 @@ def render_search():
     cur.execute(query, (search, search, search, search, search))
     dictionary = cur.fetchall()
     con.close()
+    Categories = categories()
     return render_template("search.html", searchdictionary=dictionary, title=title, is_logged_in=is_logged_in(),
-                           is_teacher=is_teacher())
+                           is_teacher=is_teacher(), categories=Categories)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -115,7 +140,7 @@ def render_login():
         email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
-        query = "SELECT id, fname, password, permissions FROM users WHERE email = ?"
+        query = "SELECT id, fname, lname, password, permissions FROM users WHERE email = ?"
         con = create_connection(DATABASE)
         cur = con.cursor()
         cur.execute(query, (email,))
@@ -126,8 +151,9 @@ def render_login():
         try:
             user_id = user_data[0]
             first_name = user_data[1]
-            db_password = user_data[2]
-            permissions = user_data[3]
+            last_name = user_data[2]
+            db_password = user_data[3]
+            permissions = user_data[4]
         except IndexError:
             return redirect("/login?error=INDEXERROR")
 
@@ -137,10 +163,12 @@ def render_login():
         session['email'] = email
         session['user_id'] = user_id
         session['firstname'] = first_name
+        session['lastname'] = last_name
         session['permissions'] = permissions
         print(session)
         return redirect('/')
-    return render_template('login.html', is_teacher=is_teacher(), is_logged_in=is_logged_in())
+    Categories = categories()
+    return render_template('login.html', is_teacher=is_teacher(), is_logged_in=is_logged_in(), categories=Categories)
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -185,7 +213,8 @@ def render_signup():
 
         return redirect("/login")
 
-    return render_template('signup.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    Categories = categories()
+    return render_template('signup.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
 
 @app.route('/admin', methods=['POST', 'GET'])
@@ -198,7 +227,7 @@ def render_admin():  # put application's code here
         Category = request.form.get('Category').title().strip()
         Definition = request.form.get('Definition').strip()
         YearLevel = request.form.get('YearLevel')
-        Author = request.form.get('Author').title().strip()
+        Author = session.get("firstname") + ' ' + session.get("lastname")
         con = create_connection(DATABASE)
         query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author) VALUES (?, ?, ?, ?, ?, ?)"
         print(query)
@@ -208,7 +237,8 @@ def render_admin():  # put application's code here
         con.close()
 
         return redirect('/')
-    return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    Categories = categories()
+    return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
 
 @app.route('/logout')

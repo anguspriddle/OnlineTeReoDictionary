@@ -18,22 +18,9 @@
     <div class="dropdown">
         <button class="sidebarbutton">Categories</button>
             <div class="dropdown-content">
-                <a href = "/words/Actions">Actions</a>
-                <a href = "/words/Animals">Animals</a>
-                <a href = "/words/Clothing">Clothing</a>
-                <a href = "/words/Culture-Religion">Culture - Religion</a>
-                <a href = "/words/Descriptions">Descriptions</a>
-                <a href = "/words/Emotions">Emotions</a>
-                <a href = "/words/Food">Food</a>
-                <a href = "/words/Math-Number">Math - Number</a>
-                <a href = "/words/Outdoors">Outdoors</a>
-                <a href = "/words/People">People</a>
-                <a href = "/words/Places">Places</a>
-                <a href = "/words/Plants">Plants</a>
-                <a href = "/words/School">School</a>
-                <a href = "/words/Sport">Sport</a>
-                <a href = "/words/Technology">Technology</a>
-                <a href = "/words/Time">Time</a>
+                {% for categories in categories %}
+                    <a href="/words/{{ categories[0] }}">{{ categories[0] }}</a>
+                {% endfor %}
             </div>
     </div>
     <div class="sidebarfooter">

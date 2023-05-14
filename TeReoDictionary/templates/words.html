@@ -10,7 +10,10 @@
         {% for words in dictionary %}
             <div class="word-box">
                 <div class="word-box-word">
-                    <a href="{{ words[0] }}"><h2>{{ words[1] }}</h2></a>
+                    <form action="/{{ words[0] }}">
+                        <input type="submit" value="Details" class="wordbutton">
+                    </form>
+                    <h2>{{ words[1] }}</h2>
                     <h3>{{ words[2] }}</h3>
                     <h4 style="float:right">{{ words[3] }}</h4>
                 </div>

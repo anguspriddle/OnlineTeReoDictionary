@@ -1,22 +1,31 @@
 {% extends "base.html" %}
 
 {% block main %}
-<form class="myform" method="POST">
-    <div class = "form-group">
-        <div class="form-label">Email:</div>
-        <div class ="form-element"><input type="email" name="email" id="email" required></div>
+<div class="confirmationbox">
+    <form class="myform" method="POST">
+        <div class = "form-group">
+            <div class="form-label">Email:</div>
+            <div class ="form-element"><input type="email" name="email" id="email" required></div>
 
-    </div>
-    <div class="form-group">
-        <div class="form-label">Password:</div>
-        <div class="form-element"><input type="password" name="password" id="password" required></div>
+        </div>
+        <br>
+        <div class="form-group">
+            <div class="form-label">Password:</div>
+            <div class="form-element"><input type="password" name="password" id="password" required></div>
 
-    </div>
-    <div class="form-group">
-        <div class="form-label"></div>
-        <div class="form-element"><input type="submit" value="Login"></div>
-    </div>
+        </div>
+        <br>
+        <br>
+        <div class="form-group">
+            <div class="form-label"></div>
+            <div class="form-element"><input type="submit" value="Login" class="singuploginbutton"></div>
+        </div>
 
-</form>
-<p><br><br><br>If you don't yet have an accout, please <a href="/signup">sign up</a>.</p>
+    </form>
+    <br>
+    <br>
+    <br>
+    <p style="float:bottom;">If you don't yet have an accout, please <a href="/signup">sign up</a>.</p>
+</div>
+
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block navbar %}
+{% endblock %}
+{% block main %}
+
+    <div class="confirmationbox">
+        <h2>Are you sure you want to delete the word from the dictionary?</h2>
+        <form action="/deleteword/{{ word[0][0] }}">
+            <input type="submit" value="Delete" class="confirmationbutton">
+        </form>
+        <form action="/">
+            <input type="submit" value="Do not Delete" class="confirmationbutton">
+        </form>
+    </div>
+{% endblock %}
