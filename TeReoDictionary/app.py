@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request, session
 import sqlite3
+import datetime
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 
@@ -56,7 +57,7 @@ def render_home():
 def render_dictionary():
     # This takes the dictionary from the db file and passes it through to the page
     con = create_connection(DATABASE)
-    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author FROM Dictionary"  # Picks certain columns
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, DateAdded FROM Dictionary"  # Picks certain columns
     # from db file
     cur = con.cursor()
     cur.execute(query)
@@ -71,7 +72,7 @@ def render_dictionary():
 @app.route('/words/<Category>')  # This is a link that passes through what category it's looking for through the link
 def render_dictionary_categories(Category):
     con = create_connection(DATABASE)
-    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author FROM Dictionary WHERE Category=?"
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, DateAdded FROM Dictionary WHERE Category=?"
     # This query means that it will only take the category that was selected through the link
     cur = con.cursor()
     cur.execute(query, (Category,))
@@ -85,7 +86,7 @@ def render_dictionary_categories(Category):
 @app.route('/<id>')
 def render_word(id):
     con = create_connection(DATABASE)
-    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage FROM Dictionary WHERE id=?"
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage, DateAdded FROM Dictionary WHERE id=?"
     cur = con.cursor()
     cur.execute(query, (id,))
     word = cur.fetchall()
@@ -228,11 +229,12 @@ def render_admin():  # put application's code here
         Definition = request.form.get('Definition').strip()
         YearLevel = request.form.get('YearLevel')
         Author = session.get("firstname") + ' ' + session.get("lastname")
+        DateAdded = datetime.date.today()
         con = create_connection(DATABASE)
-        query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author) VALUES (?, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author, DateAdded) VALUES (?, ?, ?, ?, ?, ?, ?)"
         print(query)
         cur = con.cursor()
-        cur.execute(query, (Maori, English, Category, Definition, YearLevel, Author))
+        cur.execute(query, (Maori, English, Category, Definition, YearLevel, Author, DateAdded))
         con.commit()
         con.close()
 
