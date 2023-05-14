@@ -1,23 +1,25 @@
-from flask import Flask, render_template, redirect,request,session
+from flask import Flask, render_template, redirect, request, session
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 
-DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
-# DATABASE = "D:/13dts/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
+# DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
+DATABASE = "D:/13dts/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "QLGus49&"
 
-def create_connection(db_file):
+
+def create_connection(db_file):  # This function will create a connection to the database file
     try:
         connection = sqlite3.connect(db_file)
-        return(connection)
+        return (connection)
     except Error as e:
         print(e)
     return None
 
-def is_logged_in():
+
+def is_logged_in():  # this will simply check if there is someone logged in by checking
     if session.get("email") is None:
         print("not logged in")
         return False
@@ -25,51 +27,69 @@ def is_logged_in():
         print("Logged in")
         return True
 
-def is_teacher():
+
+def is_teacher():  # this function will check if the person logged in to the session is a teacher or not
     if session.get("permissions") == "teacher":
         print('is teacher')
         return True
     else:
         print("is not teacher")
         return False
+
+
 @app.route('/')
-def hello_world():  # put application's code here
+def render_home():
     return render_template('home.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
+
 
 @app.route('/words')
 def render_dictionary():
+    # This takes the dictionary from the db file and passes it through to the page
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel, Author FROM Dictionary"
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author FROM Dictionary"  # Picks certain columns
+    # from db file
     cur = con.cursor()
     cur.execute(query)
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
     return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    # This will return the html page while passing through all the variables
 
-@app.route('/words/<Category>')
+
+@app.route('/words/<Category>')  # This is a link that passes through what category it's looking for through the link
 def render_dictionary_categories(Category):
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM Dictionary WHERE Category=?"
+    query = "SELECT Maori, English, Category, Definition, YearLevel, Author FROM Dictionary WHERE Category=?"
+    # This query means that it will only take the category that was selected through the link
     cur = con.cursor()
     cur.execute(query, (Category,))
     dictionary = cur.fetchall()
     con.close()
     print(dictionary)
     return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    # This will pass through the page but now with the variable only having the selected category
 
-@app.route('/<Maori>')
-def render_word(Maori):
+@app.route('/<id>')
+def render_word(id):
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition, YearLevel FROM Dictionary WHERE Maori=?"
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage FROM Dictionary WHERE id=?"
     cur = con.cursor()
-    cur.execute(query, (Maori,))
+    cur.execute(query, (id,))
     word = cur.fetchall()
     con.close()
     print(word)
     return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher())
 
-
+@app.route('/deleteword/<id>')
+def deleteword(id):
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "DELETE FROM Dictionary WHERE id = ?"
+    cur.execute(query, (id,))
+    con.commit()
+    con.close()
+    return redirect('/')
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
     search = request.form['search']
@@ -82,7 +102,9 @@ def render_search():
     cur.execute(query, (search, search, search, search, search))
     dictionary = cur.fetchall()
     con.close()
-    return render_template("search.html", searchdictionary = dictionary, title=title, is_logged_in=is_logged_in(), is_teacher=is_teacher())
+    return render_template("search.html", searchdictionary=dictionary, title=title, is_logged_in=is_logged_in(),
+                           is_teacher=is_teacher())
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def render_login():
@@ -119,6 +141,7 @@ def render_login():
         print(session)
         return redirect('/')
     return render_template('login.html', is_teacher=is_teacher(), is_logged_in=is_logged_in())
+
 
 @app.route('/signup', methods=['POST', 'GET'])
 def render_signup():
@@ -164,9 +187,29 @@ def render_signup():
 
     return render_template('signup.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
 
-@app.route('/admin')
+
+@app.route('/admin', methods=['POST', 'GET'])
 def render_admin():  # put application's code here
+    if not is_teacher():
+        return redirect('/')
+    if request.method == 'POST':
+        Maori = request.form.get('Maori').title().strip()
+        English = request.form.get('English').title().strip()
+        Category = request.form.get('Category').title().strip()
+        Definition = request.form.get('Definition').strip()
+        YearLevel = request.form.get('YearLevel')
+        Author = request.form.get('Author').title().strip()
+        con = create_connection(DATABASE)
+        query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author) VALUES (?, ?, ?, ?, ?, ?)"
+        print(query)
+        cur = con.cursor()
+        cur.execute(query, (Maori, English, Category, Definition, YearLevel, Author))
+        con.commit()
+        con.close()
+
+        return redirect('/')
     return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher())
+
 
 @app.route('/logout')
 def render_logout():
@@ -174,6 +217,7 @@ def render_logout():
     [session.pop(key) for key in list(session.keys())]
     print(list(session.keys()))
     return redirect('/?message=see+you+next+time!')
+
 
 if __name__ == '__main__':
     app.run()
