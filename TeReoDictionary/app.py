@@ -4,8 +4,9 @@ import datetime
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 
-DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
+# DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
 # DATABASE = "D:/13dts/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
+DATABASE = "maindictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "QLGus49&"
@@ -43,9 +44,19 @@ def categories():
     cur = con.cursor()
     cur.execute(query)
     Categories = cur.fetchall()
-    print("Categories:", Categories) # Add this line for debugging
     con.close()
     return Categories
+
+def get_words():
+    # This takes the dictionary from the db file and passes it through to the page
+    con = create_connection(DATABASE)
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, DateAdded FROM Dictionary"  # Picks certain columns
+    # from db file
+    cur = con.cursor()
+    cur.execute(query)
+    allwords = cur.fetchall()
+    con.close()
+    return allwords
 
 @app.route('/')
 def render_home():
@@ -218,6 +229,15 @@ def render_signup():
 def render_admin():  # put application's code here
     if not is_teacher():
         return redirect('/')
+    Categories = categories()
+    return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
+
+@app.route('/admin/word', methods=['POST', 'GET'])
+def render_wordadmin():
+    Categories = categories()
+    if not is_teacher():
+        return redirect('/')
+    listwords = get_words()
     if request.method == 'POST':
         Maori = request.form.get('Maori').title().strip()
         English = request.form.get('English').title().strip()
@@ -227,21 +247,56 @@ def render_admin():  # put application's code here
         Author = session.get("firstname") + ' ' + session.get("lastname")
         DateAdded = datetime.date.today()
         con = create_connection(DATABASE)
-        query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author, DateAdded) VALUES (?, ?, ?, ?, ?, ?, ?)"
-        print(query)
         cur = con.cursor()
+
+        # Check if the record already exists
+        query = "SELECT COUNT(*) FROM Dictionary WHERE Maori = ?"
+        cur.execute(query, (Maori,))
+        result = cur.fetchone()
+
+        if result[0] > 0:
+            # Record already exists, show an error, do not execute
+            Error = "Word Already Exists"
+            return render_template('adminwords.html', Error=Error, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
+
+        # Record doesn't exist, proceed with insertion
+        query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author, DateAdded) VALUES (?, ?, ?, ?, ?, ?, ?)"
         cur.execute(query, (Maori, English, Category, Definition, YearLevel, Author, DateAdded))
         con.commit()
         con.close()
 
-        return redirect('/')
-    Categories = categories()
-    return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
+        return redirect('/admin/word')
+    return render_template('adminwords.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories, listwords=listwords)
 
-@app.route('/admin/addcategory', methods=['POST', 'GET'])
-def render_addremovecategories():
+@app.route('/deleteadminwordconfirmation/<id>')
+def deleteadminwordconfirmation(id):
+    con = create_connection(DATABASE)
+    query = "SELECT id, Maori FROM Dictionary WHERE id=?"
+    cur = con.cursor()
+    cur.execute(query, (id,))
+    word = cur.fetchall()
+    con.close()
+    return render_template('deletewordconfirmation.html', word=word)
+@app.route('/deleteadminword/<id>')
+def deleteadminword(id):
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "DELETE FROM Dictionary WHERE id = ?"
+    cur.execute(query, (id,))
+    con.commit()
+    con.close()
+    Categories = categories()
+    return redirect('/')
+
+@app.route('/admin/category', methods=['POST', 'GET'])
+def render_categories():
     if not is_teacher():
         return redirect('/')
+    Categories = categories()
+    return render_template('categories.html', Categories=Categories, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
+
+@app.route('/addcategory', methods=['POST', 'GET'])
+def render_add_category():
     if request.method == 'POST':
         Category = request.form.get('Category').title().strip()
         con = create_connection(DATABASE)
@@ -251,29 +306,32 @@ def render_addremovecategories():
         cur.execute(query, (Category, ))
         con.commit()
         con.close()
+        return redirect('/admin/category')
+@app.route('/deletecategory', methods=['POST', 'GET'])
+def render_delete_category():
+    if request.method == 'POST':
+        cat = request.form.get('Category')
+        con = create_connection(DATABASE)
+        query = f"SELECT id, Category FROM Categories WHERE Category = '{cat}'"
+        cur = con.cursor()
+        cur.execute(query)
+        category = cur.fetchone()
+        con.close()
+        print(category)
+        return render_template('categorydeleteconfirm.html', cat=category, Categories=categories(), is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
+    return render_template('categories.html', Categories=categories(), is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
 
-        return redirect('/admin')
+@app.route('/deletecategory/<int:cat_id>', methods=['POST'])
+def render_delete_categoryConfirmed(cat_id):
+    print(cat_id)
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "DELETE FROM Categories WHERE id = ?"
+    cur.execute(query, (cat_id,))
+    con.commit()
+    con.close()
     Categories = categories()
-    return render_template('addcategory.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
-
-@app.route('/admin/deletecategory', methods=['POST', 'GET'])
-def render_removecategories():
-    if not is_teacher():
-        return redirect('/')
-    if request.method == 'POST':
-        Category = request.form.get('Category')
-        Categories = categories()
-        return render_template('deletecategoryconfirmation.html', Category=Category, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
-    return render_template('deletecategory.html')
-
-@app.route('/admin/deletecategoryconfirmation/<Category>', methods=['POST', 'GET'])
-def render_deletecategoryconfirmation():
-    if not is_teacher():
-        return redirect('/')
-    if request.method == 'POST':
-
-
-
+    return redirect('/')
 
 @app.route('/logout')
 def render_logout():
@@ -281,6 +339,7 @@ def render_logout():
     [session.pop(key) for key in list(session.keys())]
     print(list(session.keys()))
     return redirect('/?message=see+you+next+time!')
+
 
 
 if __name__ == '__main__':

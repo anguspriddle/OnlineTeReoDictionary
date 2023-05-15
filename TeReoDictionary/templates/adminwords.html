@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block navbar %}
+{% endblock %}
+{% block main %}
+    <div class="confirmationbox">
+        <h3>Add A Word</h3>
+    <form class = "myform" method="post">
+    <div class="form-group">
+        <div class="form-label">Maori Word:</div>
+        <div class="form-element"><input type = "text" name = "Maori" id ="Maori" required></div>
+    </div>
+    <div class = "error">{{ fname_error }}</div>
+    <div class="form-group">
+        <div class="form-label">English Word:</div>
+        <div class="form-element"><input type = "text" name = "English" id = "English" required></div>
+    </div>
+    <div class = "error">{{ lname_error }}</div>
+    <div class = "form-group">
+        <div class = "form-label">Category: </div>
+        <select name="Category" id="Category">
+            {% for categories in categories %}
+            <option value="{{ categories[0] }}">{{ categories[0] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class = "form-group">
+        <div class = "form-label">Definition: </div>
+        <div class = "form-element"><input type ="text" name = "Definition" id = "Definition" required></div>
+    </div>
+    <div class = "error">{{ error }}</div>
+    <div class = "form-group">
+        <div class = "form-label">Year Level: </div>
+        <div class = "form-element"><input type = "text" name = "YearLevel" id = "YearLevel" required></div>
+    </div>
+
+    <div class = "form-group">
+        <div class = "form-label"></div>
+        <div class = "form-element"><input type="submit" value = "Submit"></div>
+    </div>
+    <p class="errortext">{{ Error }}</p>
+    </form>
+    </div>
+    <div class="confirmationbox">
+        <h3>Delete a word</h3>
+        <form class = "myform"   method="post" action="/deleteadminwordconfirmation/{{ words[0] }}>
+            <div class="form-group">
+                <div class="form-label">Words To Delete: </div>
+                <select name="Word" id="Word">
+                    {% for words in listwords %}
+                        <option value="{{ words[1] }}">{{ words[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class = "form-group">
+                <div class="formlabel"></div>
+                <div class="formelement">
+                    <input type="submit" value="Delete" class="confirmationbutton">
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

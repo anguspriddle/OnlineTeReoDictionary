@@ -4,9 +4,8 @@
 {% block main %}
 
     <div class="confirmationbox">
-        <h2>Are you sure you want to delete the {{ category }} from the list of Categories?</h2>
-        <h4>The words will not be deleted.</h4>
-        <form action="/deletecategoryconfirmed">
+        <h2>Are you sure you want to delete the category: {{ cat[1] }}</h2>
+        <form action="/deletecategory/{{ cat[0] }}" method="POST">
             <input type="submit" value="Delete" class="confirmationbutton">
         </form>
         <form action="/">

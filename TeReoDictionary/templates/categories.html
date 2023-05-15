@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block navbar %}
+{% endblock %}
+{% block main %}
+    <div class="confirmationbox">
+        <h3>Add A Category</h3>
+    <form class = "myform" method="post" action="/addcategory">
+    <div class="form-group">
+        <div class="form-label">Category Name: </div>
+        <div class="form-element"><input type = "text" name = "Category" id ="Category" required></div>
+    </div>
+        <div class = "form-group">
+            <div class = "form-label"></div>
+            <div class = "form-element"><input type="submit" value = "Submit" class="confirmationbutton"></div>
+    </div>
+    </form>
+    </div>
+    <div class="confirmationbox">
+        <h3>Remove a category</h3>
+        <form class = "myform" action="/deletecategory"  method="post" >
+            <div class="form-group">
+                <div class="form-label">Category To Delete: </div>
+                <select name="Category" id="Category">
+                    {% for categories in categories %}
+                        <option value="{{ categories[0] }}">{{ categories[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class = "form-group">
+                <div class="formlabel"></div>
+                <div class="formelement">
+                    <input type="submit" value="Delete" class="confirmationbutton">
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
