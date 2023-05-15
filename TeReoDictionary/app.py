@@ -4,8 +4,8 @@ import datetime
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 
-# DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
-DATABASE = "D:/13dts/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
+DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
+# DATABASE = "D:/13dts/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "QLGus49&"
@@ -63,7 +63,6 @@ def render_dictionary():
     cur.execute(query)
     dictionary = cur.fetchall()
     con.close()
-    print(dictionary)
     Categories = categories()
     return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will return the html page while passing through all the variables
@@ -78,7 +77,6 @@ def render_dictionary_categories(Category):
     cur.execute(query, (Category,))
     dictionary = cur.fetchall()
     con.close()
-    print(dictionary)
     Categories = categories()
     return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will pass through the page but now with the variable only having the selected category
@@ -91,7 +89,6 @@ def render_word(id):
     cur.execute(query, (id,))
     word = cur.fetchall()
     con.close()
-    print(word)
     Categories = categories()
     return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
@@ -102,7 +99,6 @@ def deletewordconfirmation(id):
     cur = con.cursor()
     cur.execute(query, (id,))
     word = cur.fetchall()
-    print(word)
     con.close()
     return render_template('deletewordconfirmation.html', word=word)
 @app.route('/deleteword/<id>')
@@ -241,6 +237,42 @@ def render_admin():  # put application's code here
         return redirect('/')
     Categories = categories()
     return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
+
+@app.route('/admin/addcategory', methods=['POST', 'GET'])
+def render_addremovecategories():
+    if not is_teacher():
+        return redirect('/')
+    if request.method == 'POST':
+        Category = request.form.get('Category').title().strip()
+        con = create_connection(DATABASE)
+        query = "INSERT INTO Categories (Category) VALUES (?)"
+        print(query)
+        cur = con.cursor()
+        cur.execute(query, (Category, ))
+        con.commit()
+        con.close()
+
+        return redirect('/admin')
+    Categories = categories()
+    return render_template('addcategory.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
+
+@app.route('/admin/deletecategory', methods=['POST', 'GET'])
+def render_removecategories():
+    if not is_teacher():
+        return redirect('/')
+    if request.method == 'POST':
+        Category = request.form.get('Category')
+        Categories = categories()
+        return render_template('deletecategoryconfirmation.html', Category=Category, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
+    return render_template('deletecategory.html')
+
+@app.route('/admin/deletecategoryconfirmation/<Category>', methods=['POST', 'GET'])
+def render_deletecategoryconfirmation():
+    if not is_teacher():
+        return redirect('/')
+    if request.method == 'POST':
+
+
 
 
 @app.route('/logout')

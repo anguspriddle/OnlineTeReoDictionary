@@ -2,7 +2,8 @@
 {% block navbar %}
 {% endblock %}
 {% block main %}
-    <h3>Add A Word</h3>
+    <div class="confirmationbox">
+        <h3>Add A Word</h3>
     <form class = "myform" method="post">
     <div class="form-group">
         <div class="form-label">Maori Word:</div>
@@ -36,5 +37,16 @@
         <div class = "form-label"></div>
         <div class = "form-element"><input type="submit" value = "Submit"></div>
     </div>
-</form>
+    </form>
+    </div>
+    <div class="confirmationbox">
+        <h2>Add or Delete a Category</h2>
+        <form action="/admin/addcategory">
+            <input type="submit" value="Add" class="confirmationbutton">
+        </form>
+        <form action="/admin/deletecategory">
+            <input type="submit" value="Remove" class="confirmationbutton">
+        </form>
+    </div>
+    </div>
 {% endblock %}
