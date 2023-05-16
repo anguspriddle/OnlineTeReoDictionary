@@ -222,6 +222,7 @@ h1 {
 
 .word-box {
     width: 32%;
+    min-width: 500px;
     border: 2px solid rgba(189, 195, 199, 1.0);
     color: white;
     margin-bottom: 0.5rem;

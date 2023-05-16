@@ -4,8 +4,6 @@ import datetime
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 
-# DATABASE = "C:/Users/19171/PycharmProjects/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
-# DATABASE = "D:/13dts/OnlineTeReoDictionary/TeReoDictionary/maindictionary.db"
 DATABASE = "maindictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -38,7 +36,8 @@ def is_teacher():  # this function will check if the person logged in to the ses
         print("is not teacher")
         return False
 
-def categories():
+def categories(): # this function grabs all the categories currently in the category table in order to
+    # display them in the sidebar dropdown efficiently.
     con = create_connection(DATABASE)
     query = "SELECT Category FROM Categories"
     cur = con.cursor()
@@ -48,9 +47,10 @@ def categories():
     return Categories
 
 def get_dictionary():
+    # This function grabs the entire dictionary from the dictionary table and this is used when all the words in the
+    # dictionary are needed to be displayed or needed.
     con = create_connection(DATABASE)
     query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage, DateAdded FROM Dictionary"  # Picks certain columns
-    # from db file
     cur = con.cursor()
     cur.execute(query)
     dictionary = cur.fetchall()
@@ -60,12 +60,14 @@ def get_dictionary():
 @app.route('/')
 def render_home():
     Categories = categories()
+    # This is is simply the home page of the website, passing through the categories needed for the sidebar menu
     return render_template('home.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
 
 @app.route('/words')
 def render_dictionary():
     dictionary = get_dictionary()
+    # This grabs the entire dictionary list of words, passes them through to display in the html
     Categories = categories()
     return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will return the html page while passing through all the variables
@@ -86,6 +88,7 @@ def render_dictionary_categories(Category):
 
 @app.route('/<id>')
 def render_word(id):
+    # This app route is for the singular word page that displays every single piece of information available about a word
     con = create_connection(DATABASE)
     query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage, DateAdded FROM Dictionary WHERE id=?"
     cur = con.cursor()
@@ -137,7 +140,6 @@ def deleteword(id):
     cur.execute(query, (id,))
     con.commit()
     con.close()
-    Categories = categories()
     return redirect('/')
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
@@ -256,9 +258,9 @@ def render_wordadmin():
         return redirect('/')
     dictionary = get_dictionary()
     if request.method == 'POST':
-        Maori = request.form.get('Maori').title().strip()
-        English = request.form.get('English').title().strip()
-        Category = request.form.get('Category').title().strip()
+        Maori = request.form.get('Maori').strip()
+        English = request.form.get('English').strip()
+        Category = request.form.get('Category').strip()
         Definition = request.form.get('Definition').strip()
         YearLevel = request.form.get('YearLevel')
         Author = session.get("firstname") + ' ' + session.get("lastname")
@@ -266,15 +268,15 @@ def render_wordadmin():
         con = create_connection(DATABASE)
         cur = con.cursor()
 
-        # Check if the record already exists
+        # Check if the word already exists
         query = "SELECT COUNT(*) FROM Dictionary WHERE Maori = ?"
         cur.execute(query, (Maori,))
         result = cur.fetchone()
 
         if result[0] > 0:
-            # Record already exists, show an error, do not execute
+            # If the word exists in the dictionary, return error
             Error = "Word Already Exists"
-            return render_template('adminwords.html', Error=Error, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
+            return render_template('adminwords.html', Error=Error, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories, dictionary=dictionary)
 
         # Record doesn't exist, proceed with insertion
         query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author, DateAdded) VALUES (?, ?, ?, ?, ?, ?, ?)"
