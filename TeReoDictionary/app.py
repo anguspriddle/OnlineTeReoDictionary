@@ -116,7 +116,7 @@ def edit_word(id):
         con.commit()
         con.close()
 
-        return render_template('dictionary.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), Categories=Categories)
+        return render_template('home.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), Categories=Categories)
 
     con.close()
     return render_template('editword.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), Categories=Categories)
