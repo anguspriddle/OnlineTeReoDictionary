@@ -47,16 +47,15 @@ def categories():
     con.close()
     return Categories
 
-def get_words():
-    # This takes the dictionary from the db file and passes it through to the page
+def get_dictionary():
     con = create_connection(DATABASE)
-    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, DateAdded FROM Dictionary"  # Picks certain columns
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage, DateAdded FROM Dictionary"  # Picks certain columns
     # from db file
     cur = con.cursor()
     cur.execute(query)
-    allwords = cur.fetchall()
+    dictionary = cur.fetchall()
     con.close()
-    return allwords
+    return dictionary
 
 @app.route('/')
 def render_home():
@@ -66,14 +65,7 @@ def render_home():
 
 @app.route('/words')
 def render_dictionary():
-    # This takes the dictionary from the db file and passes it through to the page
-    con = create_connection(DATABASE)
-    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, DateAdded FROM Dictionary"  # Picks certain columns
-    # from db file
-    cur = con.cursor()
-    cur.execute(query)
-    dictionary = cur.fetchall()
-    con.close()
+    dictionary = get_dictionary()
     Categories = categories()
     return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will return the html page while passing through all the variables
@@ -103,6 +95,31 @@ def render_word(id):
     Categories = categories()
     return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
+@app.route('/<id>/edit', methods=['GET', 'POST'])
+def edit_word(id):
+    Categories=categories()
+    con = create_connection(DATABASE)
+    query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage, DateAdded FROM Dictionary WHERE id=?"
+    cur = con.cursor()
+    cur.execute(query, (id,))
+    word = cur.fetchone()
+
+    if request.method == 'POST':
+        maori = request.form.get('Maori')
+        english = request.form.get('English')
+        category = request.form.get('Category')
+        definition = request.form.get('Definition')
+        # Get other updated word details from the form
+
+        update_query = "UPDATE Dictionary SET Maori=?, English=?, Category=?, Definition=? WHERE id=?"
+        cur.execute(update_query, (maori, english, category, definition, id))
+        con.commit()
+        con.close()
+
+        return render_template('dictionary.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), Categories=Categories)
+
+    con.close()
+    return render_template('editword.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), Categories=Categories)
 @app.route('/deletewordconfirmation/<id>')
 def deletewordconfirmation(id):
     con = create_connection(DATABASE)
@@ -237,7 +254,7 @@ def render_wordadmin():
     Categories = categories()
     if not is_teacher():
         return redirect('/')
-    listwords = get_words()
+    dictionary = get_dictionary()
     if request.method == 'POST':
         Maori = request.form.get('Maori').title().strip()
         English = request.form.get('English').title().strip()
@@ -266,17 +283,20 @@ def render_wordadmin():
         con.close()
 
         return redirect('/admin/word')
-    return render_template('adminwords.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories, listwords=listwords)
+    return render_template('adminwords.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories, dictionary=dictionary)
 
-@app.route('/deleteadminwordconfirmation/<id>')
-def deleteadminwordconfirmation(id):
-    con = create_connection(DATABASE)
-    query = "SELECT id, Maori FROM Dictionary WHERE id=?"
-    cur = con.cursor()
-    cur.execute(query, (id,))
-    word = cur.fetchall()
-    con.close()
-    return render_template('deletewordconfirmation.html', word=word)
+@app.route('/deleteadminwordconfirmation', methods=['POST'])
+def deleteadminwordconfirmation():
+    if request.method == 'POST':
+        word = request.form.get('Word')
+        con = create_connection(DATABASE)
+        query = f"SELECT id, Maori FROM Dictionary WHERE Maori = '{word}'"
+        cur = con.cursor()
+        cur.execute(query)
+        selectedword = cur.fetchall()
+        con.close()
+        print(selectedword)
+        return render_template('deletewordconfirmation.html', word=selectedword, Categories=categories(), is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
 @app.route('/deleteadminword/<id>')
 def deleteadminword(id):
     con = create_connection(DATABASE)

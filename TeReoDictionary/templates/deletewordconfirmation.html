@@ -4,7 +4,7 @@
 {% block main %}
 
     <div class="confirmationbox">
-        <h2>Are you sure you want to delete the word {{ word[0][0] }} from the dictionary?</h2>
+        <h2>Are you sure you want to delete the word {{ word[0][1] }} from the dictionary?</h2>
         <form action="/deleteword/{{ word[0][0] }}">
             <input type="submit" value="Delete" class="confirmationbutton">
         </form>

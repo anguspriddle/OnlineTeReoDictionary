@@ -9,6 +9,9 @@
                     <form action="/deletewordconfirmation/{{ word[0] }}" >
                         <input type="submit" value="Delete" class="wordbutton">
                     </form>
+                    <form action="/{{ word[0] }}/edit">
+                        <input type="submit" value="Edit" class="wordbutton">
+                    </form>
                 {% endif %}
                 <div class="word-box-word">
                     <h2>{{ word[1] }}</h2>

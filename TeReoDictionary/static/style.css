@@ -25,6 +25,7 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
 }
 
 h1 {
@@ -75,8 +76,10 @@ h1 {
 .NavButton {
     position: absolute;
     left: 0;
-    border-radius: 50px;
-    background-color: white;
+    border-radius: 100px;
+    width: 80px;
+    border-width: 10px;
+    background-color: mintcream;
 }
 
 .container {
