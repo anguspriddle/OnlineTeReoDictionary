@@ -98,6 +98,8 @@ def render_word(id):
     Categories = categories()
     return render_template('word.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
 
+
+
 @app.route('/<id>/edit', methods=['GET', 'POST'])
 def edit_word(id):
     Categories=categories()
