@@ -10,13 +10,14 @@
 <div class ="headingbanner">
         <h1 style="padding: 10px; font-family:'Trebuchet MS', sans-serif;">Te Reo Dictionary</h1>
         <button onclick="openNav()" class="NavButton"><img src="/static/images/Hamburger_icon.png" style="width: 40px; height: 60px;"></button>
+
 </div>
 <div class="sidebar" id="mySidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="/">Home</a>
     <a href="/words">Dictionary</a>
     <div class="dropdown">
-        <button class="sidebarbutton">Categories &#11015;</button>
+        <button class="sidebarbutton">Categories</button>
             <div class="dropdown-content">
                 {% for categories in categories %}
                     <a href="/words/{{ categories[0] }}">{{ categories[0] }}</a>
@@ -40,8 +41,10 @@
 <div class="headingbanner">
     {% block search %}
     {% endblock %}
-</div>
 
+</div>
+{% block categoriesheader %}
+{% endblock %}
 <div class="container">
     {% block main %}
     {% endblock %}

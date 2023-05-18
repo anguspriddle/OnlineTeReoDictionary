@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, request, session
+import re
 import sqlite3
 import datetime
 from sqlite3 import Error
@@ -8,6 +9,7 @@ DATABASE = "maindictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "QLGus49&"
+
 
 
 def create_connection(db_file):  # This function will create a connection to the database file
@@ -83,7 +85,8 @@ def render_dictionary_categories(Category):
     dictionary = cur.fetchall()
     con.close()
     Categories = categories()
-    return render_template('words.html', dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
+    iscategories = True
+    return render_template('words.html', iscategories=iscategories, dictionary=dictionary, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
     # This will pass through the page but now with the variable only having the selected category
 
 @app.route('/<id>')
@@ -108,15 +111,17 @@ def edit_word(id):
     cur = con.cursor()
     cur.execute(query, (id,))
     word = cur.fetchone()
+    # Applies the word to a variable in order for easy access
 
     if request.method == 'POST':
         maori = request.form.get('Maori')
         english = request.form.get('English')
         category = request.form.get('Category')
         definition = request.form.get('Definition')
-        # Get other updated word details from the form
+        # Grabs updated word details from the form
 
         update_query = "UPDATE Dictionary SET Maori=?, English=?, Category=?, Definition=? WHERE id=?"
+        # Updates the Dictionary where the id is the same.
         cur.execute(update_query, (maori, english, category, definition, id))
         con.commit()
         con.close()
@@ -127,6 +132,8 @@ def edit_word(id):
     return render_template('editword.html', word=word, is_logged_in=is_logged_in(), is_teacher=is_teacher(), Categories=Categories)
 @app.route('/deletewordconfirmation/<id>')
 def deletewordconfirmation(id):
+    # This app route is the confirmation page of the delete word function, and passes
+    # through the id of the word to the next page
     con = create_connection(DATABASE)
     query = "SELECT id, Maori FROM Dictionary WHERE id=?"
     cur = con.cursor()
@@ -136,6 +143,8 @@ def deletewordconfirmation(id):
     return render_template('deletewordconfirmation.html', word=word)
 @app.route('/deleteword/<id>')
 def deleteword(id):
+    # this function is what deletes the word from the dictionary using
+    # the passed through id from the previous confirmation page
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "DELETE FROM Dictionary WHERE id = ?"
@@ -145,11 +154,15 @@ def deleteword(id):
     return redirect('/')
 @app.route('/search', methods=['GET', 'POST'])
 def render_search():
+    # This app route will search the dictionary trying to match words/entries with the searched
+    # query, the displaying them on the screen
     search = request.form['search']
     title = "Search for " + search
     con = create_connection(DATABASE)
     query = "SELECT Maori, English, Category, Definition YearLevel FROM Dictionary WHERE " \
             "Maori like ? OR English like ? OR Category like ? OR Definition like ? OR YearLevel like ?"
+    # This query checks each relevant column of the dictionary and compares it to the search query
+    # then selects it.
     search = "%" + search + "%"
     cur = con.cursor()
     cur.execute(query, (search, search, search, search, search))
@@ -170,13 +183,13 @@ def render_login():
         password = request.form['password'].strip()
 
         query = "SELECT id, fname, lname, password, permissions FROM users WHERE email = ?"
+        # selects the id and user using the password
         con = create_connection(DATABASE)
         cur = con.cursor()
         cur.execute(query, (email,))
         user_data = cur.fetchone()
         con.close()
-        # if given the email is not in the database this will raise an error
-        # would be better to find out how to see if the query return an empty result set
+        # if given the email is not in the database this will raise an error.
         try:
             user_id = user_data[0]
             first_name = user_data[1]
@@ -188,12 +201,14 @@ def render_login():
 
         if not bcrypt.check_password_hash(db_password, password):
             return redirect(request.referrer + "?error=Email+invalid+or+Password+incorrect")
+            # Checks if the password is correct in comparison to the bcrypt password
 
         session['email'] = email
         session['user_id'] = user_id
         session['firstname'] = first_name
         session['lastname'] = last_name
         session['permissions'] = permissions
+        # inputs a session using the user information
         print(session)
         return redirect('/')
     Categories = categories()
@@ -212,7 +227,8 @@ def render_signup():
         password = request.form.get('password')
         password2 = request.form.get('password2')
         permissions = request.form.get('teachercode')
-
+        # takes the inputted forms from the user
+        # note: html automatically checks if email is valid using form id
         if permissions == '1111':
             permissions = 'teacher'
         elif permissions == '':
@@ -226,9 +242,11 @@ def render_signup():
         if len(password) < 8:
             return redirect("\signup?error=Password+must+be+at+least+8+characters")
 
+
         hashed_password = bcrypt.generate_password_hash(password)
         con = create_connection(DATABASE)
         query = "INSERT INTO users (fname, lname, email, password, permissions) VALUES (?, ?, ?, ?, ?)"
+        # inserts the new user into the users table
         cur = con.cursor()
 
         try:
@@ -247,8 +265,9 @@ def render_signup():
 
 
 @app.route('/admin', methods=['POST', 'GET'])
-def render_admin():  # put application's code here
-    if not is_teacher():
+def render_admin():
+    # renders the admin page
+    if not is_teacher():  # for admin pages, this will check if the user is an admin, if not, is redirected to home page
         return redirect('/')
     Categories = categories()
     return render_template('admin.html', is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories)
@@ -266,7 +285,9 @@ def render_wordadmin():
         Definition = request.form.get('Definition').strip()
         YearLevel = request.form.get('YearLevel')
         Author = session.get("firstname") + ' ' + session.get("lastname")
+        # this author section gets the session first name and last name to automatically assign an author
         DateAdded = datetime.date.today()
+        # this section will grab the date and time on the author's computer and applying it here
         con = create_connection(DATABASE)
         cur = con.cursor()
 
@@ -280,7 +301,8 @@ def render_wordadmin():
             Error = "Word Already Exists"
             return render_template('adminwords.html', Error=Error, is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=Categories, dictionary=dictionary)
 
-        # Record doesn't exist, proceed with insertion
+        # If the word doesn't exist already, the code will continue
+        # this next code will insert the new word in the dictionary
         query = "INSERT INTO Dictionary (Maori, English, Category, Definition, YearLevel, Author, DateAdded) VALUES (?, ?, ?, ?, ?, ?, ?)"
         cur.execute(query, (Maori, English, Category, Definition, YearLevel, Author, DateAdded))
         con.commit()
@@ -295,25 +317,18 @@ def deleteadminwordconfirmation():
         word = request.form.get('Word')
         con = create_connection(DATABASE)
         query = f"SELECT id, Maori FROM Dictionary WHERE Maori = '{word}'"
+        # this special query piece checks for an "f-string" variable instead of a normal one due to the way
+        # the input is a drop down menu on the admin page as opposed to the regular delete from
+        # specific word pages
         cur = con.cursor()
         cur.execute(query)
         selectedword = cur.fetchall()
         con.close()
-        print(selectedword)
         return render_template('deletewordconfirmation.html', word=selectedword, Categories=categories(), is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
-@app.route('/deleteadminword/<id>')
-def deleteadminword(id):
-    con = create_connection(DATABASE)
-    cur = con.cursor()
-    query = "DELETE FROM Dictionary WHERE id = ?"
-    cur.execute(query, (id,))
-    con.commit()
-    con.close()
-    Categories = categories()
-    return redirect('/')
 
 @app.route('/admin/category', methods=['POST', 'GET'])
 def render_categories():
+    # renders admin category page
     if not is_teacher():
         return redirect('/')
     Categories = categories()
@@ -325,7 +340,7 @@ def render_add_category():
         Category = request.form.get('Category').title().strip()
         con = create_connection(DATABASE)
         query = "INSERT INTO Categories (Category) VALUES (?)"
-        print(query)
+        # this will add the new category by grabbing the name and putting it in the categories table
         cur = con.cursor()
         cur.execute(query, (Category, ))
         con.commit()
@@ -337,30 +352,30 @@ def render_delete_category():
         cat = request.form.get('Category')
         con = create_connection(DATABASE)
         query = f"SELECT id, Category FROM Categories WHERE Category = '{cat}'"
+        # this query also checks for an f-string, as it also uses a dropdown menu
         cur = con.cursor()
         cur.execute(query)
         category = cur.fetchone()
         con.close()
-        print(category)
         return render_template('categorydeleteconfirm.html', cat=category, Categories=categories(), is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
     return render_template('categories.html', Categories=categories(), is_logged_in=is_logged_in(), is_teacher=is_teacher(), categories=categories())
 
-@app.route('/deletecategory/<int:cat_id>', methods=['POST'])
-def render_delete_categoryConfirmed(cat_id):
-    print(cat_id)
+@app.route('/deletecategory/<int:id>', methods=['POST'])
+def render_delete_categoryConfirmed(id):
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "DELETE FROM Categories WHERE id = ?"
-    cur.execute(query, (cat_id,))
+    # this confirmation page deletes the category from the categories table
+    cur.execute(query, (id,))
     con.commit()
     con.close()
-    Categories = categories()
     return redirect('/')
 
 @app.route('/logout')
 def render_logout():
     print(list(session.keys()))
     [session.pop(key) for key in list(session.keys())]
+    # this will remove the session user.
     print(list(session.keys()))
     return redirect('/?message=see+you+next+time!')
 

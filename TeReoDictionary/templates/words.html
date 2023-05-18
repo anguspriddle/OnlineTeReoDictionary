@@ -3,7 +3,12 @@
         <form method="POST" action="/search" class="search-bar-nonhome">
             <input type="text" placeholder="Rapunga..." name="search" id="search">
         <button type="submit"><img src="/static/images/search.png"></button>
-    </form>
+        </form>
+{% endblock %}
+{% block categoriesheader %}
+    {% if iscategories %}
+        <h2 class="categoriesheader">{{ dictionary[0][3] }}</h2>
+    {% endif %}
 {% endblock %}
 {% block main %}
     <div class="dictionary">

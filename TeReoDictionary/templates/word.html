@@ -1,35 +1,80 @@
-{% extends 'base.html' %}
-{% block navbar %}
-{% endblock %}
-{% block main %}
-    <div class="dictionary">
-        {% for word in word %}
-            <div class="singularwordbox">
-                {% if is_teacher %}
-                    <form action="/deletewordconfirmation/{{ word[0] }}" >
-                        <input type="submit" value="Delete" class="wordbutton">
-                    </form>
-                    <form action="/{{ word[0] }}/edit">
-                        <input type="submit" value="Edit" class="wordbutton">
-                    </form>
-                {% endif %}
-                <div class="word-box-word">
-                    <h2>{{ word[1] }}</h2>
-                    <h3>{{ word[2] }}</h3>
-                    <h4>Category: {{ word[3] }}</h4>
-                </div>
-                <div class="word-box-definition">
-                    <p>{{ word[4] }}</p>
-                    <p>Author: {{ word[6] }}</p>
-                    <p>Date Added: {{ word[8] }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Te Reo | Home</title>
+    <meta name="viewport" content="width=device-width, initial_scale=1">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+<!-- Heading Banner -->
+<div class="headingbanner">
+    <h1 style="padding: 10px; font-family:'Trebuchet MS', sans-serif;">Te Reo Dictionary</h1>
+    <!-- Sidebar Button -->
+    <button onclick="openNav()" class="NavButton">
+        <img src="/static/images/Hamburger_icon.png" style="width: 40px; height: 60px;">
+    </button>
+</div>
 
-                </div>
-                {% if word[7] is none %}
-                    <img src="/static/images/placeholder.png" class="center">
-                {% else %}
-                    <img src="/static/images/wordimages/{{ word[7] }}" class="center">
-                {% endif %}
-            </div>
-        {% endfor %}
+<!-- Sidebar -->
+<div class="sidebar" id="mySidebar">
+    <!-- Close Button -->
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/">Home</a>
+    <a href="/words">Dictionary</a>
+    <div class="dropdown">
+        <button class="sidebarbutton">Categories</button>
+        <div class="dropdown-content">
+            {% for categories in categories %}
+                <!-- Dynamic Category Links -->
+                <a href="/words/{{ categories[0] }}">{{ categories[0] }}</a>
+            {% endfor %}
+        </div>
     </div>
+    <div class="sidebarfooter">
+        {% if is_teacher %}
+            <!-- Admin Link for Teachers -->
+            <a href="/admin">Admin</a>
+        {% endif %}
+        {% if is_logged_in %}
+            <!-- Logout Link for Logged-in Users -->
+            <a href="/logout">Logout</a>
+        {% else %}
+            <!-- Login and Sign Up Links for Guests -->
+            <a href="/login">Login</a>
+            <a href="/signup">Sign Up</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Heading Banner -->
+<div class="headingbanner">
+    {% block search %}
+    {% endblock %}
+</div>
+
+<!-- Categories Header -->
+{% block categoriesheader %}
 {% endblock %}
+
+<div class="container">
+    <!-- Main Content -->
+    {% block main %}
+    {% endblock %}
+</div>
+
+<script>
+    /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+</script>
+</body>
+</html>
