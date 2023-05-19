@@ -105,6 +105,7 @@ def render_word(id):
 
 @app.route('/<id>/edit', methods=['GET', 'POST'])
 def edit_word(id):
+    # This app route is for editing/modifying existing words
     Categories=categories()
     con = create_connection(DATABASE)
     query = "SELECT id, Maori, English, Category, Definition, YearLevel, Author, wordImage, DateAdded FROM Dictionary WHERE id=?"
@@ -157,24 +158,26 @@ def render_search():
     # This app route will search the dictionary trying to match words/entries with the searched
     # query, the displaying them on the screen
     search = request.form['search']
+    searchquery = (search.replace('%', ''))
     title = "Search for " + search
     con = create_connection(DATABASE)
-    query = "SELECT Maori, English, Category, Definition YearLevel FROM Dictionary WHERE " \
-            "Maori like ? OR English like ? OR Category like ? OR Definition like ? OR YearLevel like ?"
+    query = "SELECT id, Maori, English, Category, Definition YearLevel FROM Dictionary WHERE " \
+            "id like ? OR Maori like ? OR English like ? OR Category like ? OR Definition like ? OR YearLevel like ?"
     # This query checks each relevant column of the dictionary and compares it to the search query
     # then selects it.
     search = "%" + search + "%"
     cur = con.cursor()
-    cur.execute(query, (search, search, search, search, search))
+    cur.execute(query, (search, search, search, search, search, search))
     dictionary = cur.fetchall()
     con.close()
     Categories = categories()
-    return render_template("search.html", searchdictionary=dictionary, title=title, is_logged_in=is_logged_in(),
+    return render_template("search.html", searchquery=searchquery, searchdictionary=dictionary, title=title, is_logged_in=is_logged_in(),
                            is_teacher=is_teacher(), categories=Categories)
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def render_login():
+    # This app route is for the login page/function
     if is_logged_in():
         return redirect('/')
     print("logging in")
@@ -217,6 +220,7 @@ def render_login():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def render_signup():
+    # this app route is for the signup function // the signup
     if is_logged_in():
         return redirect('/menu/1')
     if request.method == 'POST':
@@ -241,6 +245,13 @@ def render_signup():
 
         if len(password) < 8:
             return redirect("\signup?error=Password+must+be+at+least+8+characters")
+
+        if len(fname) > 30:
+            return redirect("\signup?error=First+Name+Must+be+Less+than+20+Characters")
+
+
+        if len(lname) > 50:
+            return redirect("\signup?error=Last+Name+Must+be+Less+than+50+Characters")
 
 
         hashed_password = bcrypt.generate_password_hash(password)
@@ -291,6 +302,14 @@ def render_wordadmin():
         con = create_connection(DATABASE)
         cur = con.cursor()
 
+        if len(Maori) > 50 or len(English) > 50:
+            return redirect('/admin/word?error=Word+must+be+less+than+50+characters')
+        if len(Definition) > 150:
+            return redirect('/admin/word?error=Definition+must+be+less+than+150+characters')
+        if len(YearLevel) > 2:
+            return redirect('/admin/word?error=Year+Level+must+be+less+than+3+characters')
+
+
         # Check if the word already exists
         query = "SELECT COUNT(*) FROM Dictionary WHERE Maori = ?"
         cur.execute(query, (Maori,))
@@ -318,7 +337,7 @@ def deleteadminwordconfirmation():
         con = create_connection(DATABASE)
         query = f"SELECT id, Maori FROM Dictionary WHERE Maori = '{word}'"
         # this special query piece checks for an "f-string" variable instead of a normal one due to the way
-        # the input is a drop down menu on the admin page as opposed to the regular delete from
+        # the input is a dropdown menu on the admin page as opposed to the regular delete from
         # specific word pages
         cur = con.cursor()
         cur.execute(query)
@@ -338,6 +357,10 @@ def render_categories():
 def render_add_category():
     if request.method == 'POST':
         Category = request.form.get('Category').title().strip()
+
+        if len(Category) > 50:
+            return redirect('/addcategory?error=Category+must+be+less+than+50+characters')
+
         con = create_connection(DATABASE)
         query = "INSERT INTO Categories (Category) VALUES (?)"
         # this will add the new category by grabbing the name and putting it in the categories table

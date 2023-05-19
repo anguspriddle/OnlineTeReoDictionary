@@ -1,49 +1,24 @@
 {% extends 'base.html' %}
-{% block navbar %}
-    <div class="topnav">
-        <img src="/static/images/search.png">
-        <a href="/">Home</a>
-        <a href="/full">Dictionary</a>
-        <div class="dropdown">
-            <button class="dropbtn">Categories
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-                <a href = "/full/Actions">Actions</a>
-                <a href = "/full/Animals">Animals</a>
-                <a href = "/full/Clothing">Clothing</a>
-                <a href = "/full/Culture">Culture / Religion</a>
-                <a href = "/full/Descriptions">Descriptions</a>
-                <a href = "/full/Emotions">Emotions</a>
-                <a href = "/full/Food">Food</a>
-                <a href = "/full/Math">Math / Number</a>
-                <a href = "/full/Outdoors">Outdoors</a>
-                <a href = "/full/People">People / Places</a>
-                <a href = "/full/Plants">Plants</a>
-                <a href = "/full/School">School / Sport</a>
-                <a href = "/full/Technology">Technology</a>
-                <a href = "/full/Time">Time</a>
-            </div>
-        </div>
-        <div class="search-container">
-            <form method="POST" action="/search">
-                <input type="text" placeholder="Search.." name="search" id="search">
-                <button type="submit"></button>
-            </form>
-        </div>
-    </div>
+{% block search %}
+        <form method="POST" action="/search" class="search-bar-nonhome">
+            <input type="text" value="{{ searchquery }}" name="search" id="search">
+        <button type="submit"><img src="/static/images/search.png"></button>
+        </form>
 {% endblock %}
 {% block main %}
     <div class="dictionary">
         {% for words in searchdictionary %}
             <div class="word-box">
                 <div class="word-box-word">
-                    <h2>{{ words[0] }}</h2>
-                    <h3>{{ words[1] }}</h3>
-                    <h4 style="float:right">{{ words[2] }}</h4>
+                    <form action="/{{ words[0] }}">
+                        <input type="submit" value="Details" class="wordbutton">
+                    </form>
+                    <h2>{{ words[1] }}</h2>
+                    <h3>{{ words[2] }}</h3>
+                    <h4 style="float:right">{{ words[3] }}</h4>
                 </div>
                 <div class="word-box-definition">
-                    <p>{{ words[3] }}</p>
+                    <p>{{ words[4] }}</p>
                 </div>
             </div>
         {% endfor %}
